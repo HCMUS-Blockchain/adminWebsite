@@ -1,8 +1,33 @@
+import { TextField, TextFieldProps } from '@mui/material'
 import * as React from 'react'
-import { useController } from 'react-hook-form'
+import { useController, Control } from 'react-hook-form'
 
-export interface InputFieldProps {}
+export type InputFieldProps = TextFieldProps & {
+  name: string
+  control: Control<any>
+}
 
-export default function InputField({}: InputFieldProps) {
-  return <div></div>
+export function InputField({ name, control, ...rest }: InputFieldProps) {
+  const {
+    field: { onChange, onBlur, value, ref },
+    fieldState: { error },
+  } = useController({
+    name,
+    control,
+  })
+  return (
+    <TextField
+      fullWidth
+      size="small"
+      margin="normal"
+      sx={{ margin: '0' }}
+      name={name}
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      inputRef={ref}
+      {...rest}
+      color="secondary"
+    />
+  )
 }

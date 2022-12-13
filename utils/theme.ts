@@ -1,7 +1,7 @@
 import { Heebo } from '@next/font/google'
 import { createTheme } from '@mui/material/styles'
 import { red } from '@mui/material/colors'
-
+import type {} from '@mui/x-date-pickers/themeAugmentation'
 export const roboto = Heebo({
   weight: ['300', '400', '500', '700'],
   subsets: ['latin'],
