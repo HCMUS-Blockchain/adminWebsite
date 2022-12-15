@@ -21,6 +21,6 @@
       "@/api/*": ["./api-client/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/form/date-time-picker-field"],
   "exclude": ["node_modules"]
 }

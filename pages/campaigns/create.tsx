@@ -1,49 +1,68 @@
 import { UploadImageComponent } from '@/components/createCampaign'
 import { MainLayout } from '@/components/layout'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Button, Divider, Grid, Stack, Typography } from '@mui/material'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { object, TypeOf, z } from 'zod'
-
+import { useRouter } from 'next/router'
 import { DateTimePickerField, InputField } from '@/components/form'
 import { LocalizationProvider } from '@mui/x-date-pickers'
-
-const imageUploadSchema = object({
-  imageCover: z.any(),
-})
-
-type IUploadImage = TypeOf<typeof imageUploadSchema> & {
-  name: string
-  numberOfVoucher: string
-  description: string
-  dateBegin: string
-  dateEnd: string
-}
+import { campaignApi } from '@/api-client'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import dayjs from 'dayjs'
 
 function CreateCampaignScreen() {
   // const [uploadImage] = useUploadImageMutation();
-
-  const methods = useForm<IUploadImage>({
+  const schema = yup.object().shape({
+    name: yup.string().required('Please enter name of voucher'),
+    numberOfVoucher: yup
+      .number()
+      .required('Please enter a number of voucher')
+      .positive('A number must be greater than 0')
+      .integer('A number must be an integer'),
+    description: yup.string(),
+    dateBegin: yup.date().typeError('Invalid Started date'),
+    dateEnd: yup
+      .date()
+      .when(
+        'dateBegin',
+        (dateBegin, yup) => dateBegin && yup.min(dateBegin, 'End time cannot be before start time')
+      ),
+  })
+  const methods = useForm({
     defaultValues: {
       name: '',
-      numberOfVoucher: '',
-      description: '',
-      dateBegin: '',
-      dateEnd: '',
+      numberOfVoucher: 0,
+      // description: '',
+      dateBegin: dayjs(new Date()),
+      // dateEnd: dayjs(new Date()),
     },
-    resolver: zodResolver(imageUploadSchema),
+    resolver: yupResolver(schema),
   })
 
-  const onSubmitHandler: SubmitHandler<IUploadImage> = async (values) => {
+  const route = useRouter()
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = methods
+  const onSubmitHandler = async (values: any) => {
     const formData = new FormData()
-    formData.append('imageCover', values.imageCover)
+
+    // formData.append('imageCover', values.imageCover[0] || ' ')
+    formData.append('name', values.name)
+    formData.append('numberOfVoucher', values.numberOfVoucher)
+    formData.append('description', values.description)
+    formData.append('dateBegin', values.dateBegin)
+    formData.append('dateEnd', values.dateEnd)
 
     // if (values.images.length > 0) {
     //   values.images.forEach((el) => formData.append('images', el))
     // }
-    console.log(formData)
-
+    console.log(values)
+    // const { data } = await campaignApi.create(formData)
+    // if (data.success) {
+    //   route.push('/campaigns')
+    // }
     // Call the Upload API
     // uploadImage(formData);
   }
@@ -61,7 +80,7 @@ function CreateCampaignScreen() {
           component="form"
           noValidate
           autoComplete="off"
-          onSubmit={methods.handleSubmit(onSubmitHandler)}
+          onSubmit={handleSubmit(onSubmitHandler)}
         >
           <Grid item xs={4}>
             <UploadImageComponent limit={3} multiple={true} name="imageCover" />
@@ -69,41 +88,22 @@ function CreateCampaignScreen() {
 
           <Grid item xs={8}>
             <Stack sx={{ ml: 10, mt: 2 }} spacing={4}>
-              <InputField
-                name="name"
-                control={methods.control}
-                label="Name of Campaign"
-                size="medium"
-                required
-              />
-              <InputField
-                name="numberOfVoucher"
-                control={methods.control}
-                label="Number of voucher"
-                size="medium"
-                required
-              />
+              <InputField name="name" label="Name of Campaign" size="medium" />
+
+              <InputField name="numberOfVoucher" label="Number of voucher" size="medium" required />
+
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <DateTimePickerField
-                    name="dateBegin"
                     control={methods.control}
+                    name="dateBegin"
                     label="Start Date"
                   />
-                  <DateTimePickerField
-                    name="dateBegin"
-                    control={methods.control}
-                    label="End Date"
-                  />
+
+                  <DateTimePickerField control={methods.control} name="dateEnd" label="End Date" />
                 </Box>
               </LocalizationProvider>
-              <InputField
-                name="description"
-                control={methods.control}
-                label="Description"
-                multiline
-                rows={4}
-              />
+              <InputField name="description" label="Description" multiline rows={4} />
             </Stack>
           </Grid>
 
