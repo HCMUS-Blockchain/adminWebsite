@@ -5,6 +5,8 @@ import '../styles/globals.css'
 import { EmptyLayout } from '@/components/layout'
 import { createEmotionCache, theme } from '@/utils/index'
 import { AppPropsWithLayout } from '../models'
+import { SWRConfig } from 'swr'
+import axiosClient from '@/api-client/axiosClient'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -16,12 +18,14 @@ export default function App({
 }: AppPropsWithLayout) {
   const Layout = Component.Layout ?? EmptyLayout
   return (
-    <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={theme}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ThemeProvider>
-    </CacheProvider>
+    <SWRConfig value={{ fetcher: (url) => axiosClient.get(url), shouldRetryOnError: false }}>
+      <CacheProvider value={emotionCache}>
+        <ThemeProvider theme={theme}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ThemeProvider>
+      </CacheProvider>
+    </SWRConfig>
   )
 }

@@ -1,13 +1,15 @@
 export type Order = 'asc' | 'desc'
 export interface Campaign {
-  id: number
+  _id: string
   name: string
-  beginDate: string
-  endDate: string
-  describe: string
+  dateBegin: number
+  dateEnd: number
+  description: string
   status: string
   numberOfVoucher: number
   action: string
+  games: Array<string>
+  image: string
 }
 
 export interface CampaignImage {
@@ -21,13 +23,14 @@ export interface HeadCell {
   numeric: boolean
 }
 
-export interface EnhancedTableProps {
+export interface EnhancedTableHeadProps {
   numSelected: number
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Campaign) => void
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
   order: Order
   orderBy: string
   rowCount: number
+  headCells: HeadCell[]
 }
 
 export interface ColorStatus {
@@ -36,4 +39,18 @@ export interface ColorStatus {
 
 export interface EnhancedTableToolbarProps {
   numSelected: number
+  selected: Array<string>
+  setSelected: any
+}
+
+export enum statusCampaign {
+  PENDING,
+  HAPPENING,
+  DONE,
+  ERROR,
+}
+
+export interface EnhancedTableProps {
+  headCells: Array<HeadCell>
+  campaignList: any
 }

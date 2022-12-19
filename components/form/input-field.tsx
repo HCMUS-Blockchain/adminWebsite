@@ -1,4 +1,4 @@
-import { TextField, TextFieldProps } from '@mui/material'
+import { TextField, TextFieldProps, InputAdornment } from '@mui/material'
 import * as React from 'react'
 import { useController, Control, useFormContext } from 'react-hook-form'
 
@@ -16,6 +16,10 @@ export function InputField({ name, ...rest }: InputFieldProps) {
       fullWidth
       size="small"
       margin="normal"
+      id="outlined-start-adornment"
+      InputProps={{
+        startAdornment: <InputAdornment position="start"></InputAdornment>,
+      }}
       sx={{ margin: '0' }}
       {...methods.register(name)}
       error={invalid}

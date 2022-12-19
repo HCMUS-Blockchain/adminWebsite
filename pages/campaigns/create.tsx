@@ -1,18 +1,27 @@
-import { UploadImageComponent } from '@/components/createCampaign'
-import { MainLayout } from '@/components/layout'
-import { Box, Button, Divider, Grid, Stack, Typography } from '@mui/material'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { useRouter } from 'next/router'
-import { DateTimePickerField, InputField } from '@/components/form'
-import { LocalizationProvider } from '@mui/x-date-pickers'
 import { campaignApi } from '@/api-client'
-import * as yup from 'yup'
+import { DateTimePickerField, InputField, UploadImageComponent } from '@/components/form'
+import CheckboxesGroup from '@/components/form/check-box-field'
+import { MainLayout } from '@/components/layout'
+import { useCampaign } from '@/hooks'
+import { Campaign, statusCampaign } from '@/models'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Box, Button, Divider, Grid, Stack, Typography } from '@mui/material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/router'
+import { FormProvider, useForm } from 'react-hook-form'
+import * as yup from 'yup'
 
-function CreateCampaignScreen() {
-  // const [uploadImage] = useUploadImageMutation();
+interface CampaignScreen {
+  data?: CampaignScreenUpdate
+}
+export interface CampaignScreenUpdate extends Campaign {
+  image: string
+}
+function CreateCampaignScreen(props: CampaignScreen) {
+  const isUpdate = !props.data
+  const { updateCampaigns } = useCampaign()
   const schema = yup.object().shape({
     name: yup.string().required('Please enter name of voucher'),
     numberOfVoucher: yup
@@ -21,55 +30,83 @@ function CreateCampaignScreen() {
       .positive('A number must be greater than 0')
       .integer('A number must be an integer'),
     description: yup.string(),
-    dateBegin: yup.date().typeError('Invalid Started date'),
+    dateBegin: yup.date().required('Please enter a begin date'),
     dateEnd: yup
       .date()
+      .required('Please enter a end date')
       .when(
         'dateBegin',
         (dateBegin, yup) => dateBegin && yup.min(dateBegin, 'End time cannot be before start time')
       ),
+    imageCover: yup.mixed().required('Image is required'),
+    games: yup.array().min(1, 'Game field must have at least 1 item'),
   })
-  const methods = useForm({
-    defaultValues: {
+
+  let defaultValues
+  if (!isUpdate) {
+    defaultValues = {
       name: '',
       numberOfVoucher: 0,
-      // description: '',
-      dateBegin: dayjs(new Date()),
-      // dateEnd: dayjs(new Date()),
-    },
+      description: '',
+      dateBegin: '',
+      dateEnd: '',
+      games: [],
+    }
+  } else {
+    defaultValues = props.data
+  }
+  const formOption = {
     resolver: yupResolver(schema),
-  })
+    defaultValues: defaultValues,
+  }
+
+  const methods = useForm(formOption)
 
   const route = useRouter()
   const {
     handleSubmit,
     formState: { errors },
+    setValue,
   } = methods
+
+  setValue('name', !isUpdate ? props.data?.name : '')
+  setValue('numberOfVoucher', !isUpdate ? props.data?.numberOfVoucher : '')
+  setValue('description', !isUpdate ? props.data?.description : '')
+  setValue(
+    'dateBegin',
+    !isUpdate ? dayjs.unix(props.data?.dateBegin || dayjs(new Date()).unix()) : ''
+  )
+  setValue('dateEnd', !isUpdate ? dayjs.unix(props.data?.dateEnd || dayjs(new Date()).unix()) : '')
+  setValue('games', !isUpdate ? props.data?.games : [])
+  setValue('imageCover', !isUpdate ? props.data?.image : '')
+
   const onSubmitHandler = async (values: any) => {
     const formData = new FormData()
-
-    // formData.append('imageCover', values.imageCover[0] || ' ')
+    formData.append('imageCover', values.imageCover || ' ')
     formData.append('name', values.name)
     formData.append('numberOfVoucher', values.numberOfVoucher)
     formData.append('description', values.description)
     formData.append('dateBegin', values.dateBegin)
     formData.append('dateEnd', values.dateEnd)
+    formData.append('status', statusCampaign[0])
+    formData.append('games', values.games)
 
-    // if (values.images.length > 0) {
-    //   values.images.forEach((el) => formData.append('images', el))
-    // }
-    console.log(values)
-    // const { data } = await campaignApi.create(formData)
-    // if (data.success) {
-    //   route.push('/campaigns')
-    // }
-    // Call the Upload API
-    // uploadImage(formData);
+    if (isUpdate) {
+      const { data } = await campaignApi.create(formData)
+      if (data.success) {
+        route.push('/campaigns')
+      }
+    } else {
+      formData.append('_id', props.data?._id || '')
+      values._id = props.data?._id
+      await updateCampaigns(formData, values)
+      route.push('/campaigns')
+    }
   }
   return (
     <Box>
       <Typography component="h2" variant="h5" sx={{ mb: 2 }}>
-        Create Campaigns
+        {isUpdate ? 'Create Campaigns' : 'Update Campaign'}
       </Typography>
 
       <Divider />
@@ -83,7 +120,7 @@ function CreateCampaignScreen() {
           onSubmit={handleSubmit(onSubmitHandler)}
         >
           <Grid item xs={4}>
-            <UploadImageComponent limit={3} multiple={true} name="imageCover" />
+            <UploadImageComponent limit={1} multiple={false} name="imageCover" />
           </Grid>
 
           <Grid item xs={8}>
@@ -99,10 +136,11 @@ function CreateCampaignScreen() {
                     name="dateBegin"
                     label="Start Date"
                   />
-
                   <DateTimePickerField control={methods.control} name="dateEnd" label="End Date" />
                 </Box>
               </LocalizationProvider>
+              <CheckboxesGroup name="games" control={methods.control} />
+
               <InputField name="description" label="Description" multiline rows={4} />
             </Stack>
           </Grid>
@@ -110,10 +148,16 @@ function CreateCampaignScreen() {
           <Button
             variant="contained"
             type="submit"
-            fullWidth
-            sx={{ py: '0.8rem', my: 2, backgroundColor: 'red', mt: 15 }}
+            sx={{
+              py: '0.8rem',
+              backgroundColor: 'primary',
+              mt: 5,
+              ml: 'auto',
+              mr: 'auto',
+              width: '180px',
+            }}
           >
-            Submit Images
+            {isUpdate ? 'Create' : 'Update'}
           </Button>
         </Grid>
       </FormProvider>

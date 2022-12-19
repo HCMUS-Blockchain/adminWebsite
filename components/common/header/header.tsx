@@ -85,6 +85,7 @@ export function HeaderComponent(props: Props) {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
+          backgroundColor: 'white',
         }}
       >
         <Toolbar disableGutters>

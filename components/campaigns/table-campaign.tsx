@@ -1,9 +1,17 @@
-import { Color, headCells } from '@/constants'
-import { Campaign, EnhancedTableProps, EnhancedTableToolbarProps, Order } from '@/models/campaign'
+import { Color } from '@/constants'
+import { useCampaign } from '@/hooks'
+import {
+  Campaign,
+  EnhancedTableProps,
+  EnhancedTableToolbarProps,
+  Order,
+  EnhancedTableHeadProps,
+} from '@/models/campaign'
 import { getComparator, stableSort } from '@/utils/campaigns'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FilterListIcon from '@mui/icons-material/FilterList'
-import VisibilityIcon from '@mui/icons-material/Visibility'
+import UpdateIcon from '@mui/icons-material/Update'
+import { useEffect, useState } from 'react'
 import {
   alpha,
   Box,
@@ -13,7 +21,13 @@ import {
   Paper,
   Switch,
   Table,
+  Dialog,
+  DialogContent,
+  Button,
+  DialogContentText,
+  DialogActions,
   TableBody,
+  DialogTitle,
   TableCell,
   TableContainer,
   TableHead,
@@ -25,58 +39,24 @@ import {
   Typography,
 } from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
-import { useRouter } from 'next/router'
 
 import * as React from 'react'
+import dayjs from 'dayjs'
+import Link from 'next/link'
 
-function createData(
-  id: number,
-  name: string,
-  beginDate: string,
-  endDate: string,
-  describe: string,
-  status: string,
-  numberOfVoucher: number,
-  action: string
-): Campaign {
-  return {
-    id,
-    name,
-    beginDate,
-    endDate,
-    describe,
-    status,
-    numberOfVoucher,
-    action,
-  }
-}
-
-const rows = [
-  createData(121, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Pending', 10, 'Action'),
-  createData(2123, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Error', 10, 'Action'),
-  createData(31, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Error', 10, 'Action'),
-  createData(124, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Error', 10, 'Action'),
-  createData(1231, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Error', 10, 'Action'),
-  createData(6, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Done', 10, 'Action'),
-  createData(7, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Done', 10, 'Action'),
-  createData(8, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Done', 10, 'Action'),
-  createData(9, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Pending', 10, 'Action'),
-  createData(10, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Happening', 10, 'Action'),
-  createData(11, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Happening', 10, 'Action'),
-  createData(12, 'KFC', '10/2/2022', '10/2/2022', 'Good enough', 'Happening', 10, 'Action'),
-  createData(13, 'KFC14', '10/2/2022', '10/2/2022', 'Good enough', 'Pending', 10, 'Action'),
-]
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props
+function EnhancedTableHead(props: EnhancedTableHeadProps) {
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells } =
+    props
   const createSortHandler = (property: keyof Campaign) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property)
   }
+
   return (
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
-            color="secondary"
+            color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
@@ -113,16 +93,30 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props
+  const { numSelected, selected, setSelected } = props
+  const [open, setOpen] = React.useState(false)
+  const { deleteMultipleCampaigns } = useCampaign()
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
 
+  const handleClose = () => {
+    setOpen(false)
+  }
+  const handleDelete = async () => {
+    if (selected.length > 0) {
+      await deleteMultipleCampaigns(selected)
+      setSelected([])
+    }
+    setOpen(false)
+  }
   return (
     <Toolbar
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+          bgcolor: (theme) => alpha(theme.palette.info.main, theme.palette.action.activatedOpacity),
         }),
       }}
     >
@@ -132,12 +126,12 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </Typography>
       ) : (
         <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-          Nutrition
+          Campaigns
         </Typography>
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton>
+          <IconButton onClick={() => handleClickOpen()}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -148,17 +142,55 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </IconButton>
         </Tooltip>
       )}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Delete Confirm'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you want to delete ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Disagree
+          </Button>
+          <Button onClick={handleDelete} color="secondary" autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Toolbar>
   )
 }
 
-export function EnhancedTable() {
+export function EnhancedTable(props: EnhancedTableProps) {
   const [order, setOrder] = React.useState<Order>('asc')
-  const [orderBy, setOrderBy] = React.useState<keyof Campaign>('id')
-  const [selected, setSelected] = React.useState<readonly number[]>([])
+  const [orderBy, setOrderBy] = React.useState<keyof Campaign>('_id')
+  const [selected, setSelected] = React.useState<string[]>([])
+  const [single, setSingle] = React.useState<string>('')
   const [page, setPage] = React.useState(0)
   const [dense, setDense] = React.useState(false)
+  const [open, setOpen] = React.useState(false)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const { headCells, campaignList } = props
+  const { deleteSingleCampaigns } = useCampaign()
+  const handleClickOpen = (id: string) => {
+    setSingle(id)
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setSingle('')
+    setOpen(false)
+  }
+  const handleDelete = async () => {
+    if (single.length > 0) await deleteSingleCampaigns(single)
+    setOpen(false)
+  }
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Campaign) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -168,16 +200,16 @@ export function EnhancedTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id)
+      const newSelected = campaignList.map((n: any) => n._id)
       setSelected(newSelected)
       return
     }
     setSelected([])
   }
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
+  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id)
-    let newSelected: readonly number[] = []
+    let newSelected: string[] = []
     if (selectedIndex === -1) {
       newSelected = [...selected, id]
     } else if (selectedIndex === 0) {
@@ -187,7 +219,6 @@ export function EnhancedTable() {
     } else if (selectedIndex > 0) {
       newSelected = [...selected.slice(0, selectedIndex), ...selected.slice(selectedIndex + 1)]
     }
-
     setSelected(newSelected)
   }
 
@@ -204,15 +235,18 @@ export function EnhancedTable() {
     setDense(event.target.checked)
   }
 
-  const isSelected = (id: number) => selected.indexOf(id) !== -1
+  const isSelected = (id: string) => selected.indexOf(id) !== -1
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - campaignList.length) : 0
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          selected={selected}
+          setSelected={setSelected}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -225,30 +259,31 @@ export function EnhancedTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={campaignList.length}
+              headCells={headCells}
             />
             <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                rows.sort(getComparator(order, orderBy)).slice() */}
-              {stableSort(rows, getComparator(order, orderBy))
+              {stableSort(campaignList, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.id)
+                  const isItemSelected = isSelected(row._id.toString())
                   const labelId = `enhanced-table-checkbox-${index}`
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.id)}
-                      role="checkbox"
+                      color="info"
+                      // onClick={(event) => handleClick(event, row._id.toString())}
+                      // role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.id}
+                      key={row._id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
-                          color="secondary"
+                          color="primary"
+                          onClick={(event) => handleClick(event, row._id.toString())}
                           checked={isItemSelected}
                           inputProps={{
                             'aria-labelledby': labelId,
@@ -262,12 +297,15 @@ export function EnhancedTable() {
                         padding="none"
                         align="right"
                       >
-                        {row.id}
+                        <Link href={`/campaigns/${row._id}`}>{row._id.toString().slice(-5)}</Link>
                       </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.describe}</TableCell>
-                      <TableCell align="left">{row.beginDate}</TableCell>
-                      <TableCell align="left">{row.endDate}</TableCell>
+                      <TableCell align="left">
+                        {dayjs.unix(row.dateBegin as number).format('DD/MM/YYYY hh:mmA')}
+                      </TableCell>
+                      <TableCell align="left">
+                        {dayjs.unix(row.dateEnd as number).format('DD/MM/YYYY hh:mmA')}
+                      </TableCell>
                       <TableCell align="left">
                         <Box
                           sx={{
@@ -283,8 +321,14 @@ export function EnhancedTable() {
                       </TableCell>
                       <TableCell align="right">{row.numberOfVoucher}</TableCell>
                       <TableCell align="left">
-                        <DeleteIcon sx={{ mr: 2 }} />
-                        <VisibilityIcon />
+                        <Tooltip title="Delete">
+                          <IconButton
+                            onClick={() => handleClickOpen(row._id.toString())}
+                            color="warning"
+                          >
+                            <DeleteIcon sx={{ p: 0 }} />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   )
@@ -304,7 +348,7 @@ export function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={campaignList.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -312,9 +356,30 @@ export function EnhancedTable() {
         />
       </Paper>
       <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} color="secondary" />}
+        control={<Switch checked={dense} onChange={handleChangeDense} color="primary" />}
         label="Dense padding"
       />
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Delete Confirm'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you want to delete ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Disagree
+          </Button>
+          <Button onClick={handleDelete} color="secondary" autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

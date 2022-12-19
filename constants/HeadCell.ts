@@ -1,8 +1,8 @@
 import { HeadCell } from '@/models'
 
-export const headCells: readonly HeadCell[] = [
+export const headCells: HeadCell[] = [
   {
-    id: 'id',
+    id: '_id',
     numeric: true,
     disablePadding: true,
     label: 'ID',
@@ -13,20 +13,20 @@ export const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: 'Name',
   },
+  // {
+  //   id: 'description',
+  //   numeric: false,
+  //   disablePadding: false,
+  //   label: 'Description',
+  // },
   {
-    id: 'describe',
-    numeric: false,
-    disablePadding: false,
-    label: 'Description',
-  },
-  {
-    id: 'beginDate',
+    id: 'dateBegin',
     numeric: false,
     disablePadding: false,
     label: 'Start Date',
   },
   {
-    id: 'endDate',
+    id: 'dateEnd',
     numeric: false,
     disablePadding: false,
     label: 'End Date',

@@ -12,7 +12,7 @@ export const roboto = Heebo({
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#FFFFFF',
+      main: '#EB455F',
     },
     secondary: {
       light: '#EDF7FA',
@@ -20,6 +20,15 @@ export const theme = createTheme({
     },
     error: {
       main: red.A400,
+    },
+    info: {
+      main: '#FFFFFF',
+    },
+    text: {
+      primary: '#000000',
+    },
+    warning: {
+      main: '#000000',
     },
   },
   typography: {
@@ -72,9 +81,9 @@ export const theme = createTheme({
       ],
     },
     MuiListItemButton: {
-      defaultProps: {
-        selected: true,
-      },
+      // defaultProps: {
+      //   selected: true,
+      // },
       styleOverrides: {
         root: {
           '&:hover': {
@@ -87,6 +96,21 @@ export const theme = createTheme({
             },
           },
         },
+      },
+    },
+    MuiCheckbox: {
+      defaultProps: {
+        color: 'primary',
+      },
+      styleOverrides: {
+        colorPrimary: {
+          color: 'primary',
+        },
+      },
+    },
+    MuiFormLabel: {
+      defaultProps: {
+        color: 'warning',
       },
     },
   },

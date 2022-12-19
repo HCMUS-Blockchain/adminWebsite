@@ -1,8 +1,6 @@
-import { TextField, TextFieldProps } from '@mui/material'
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import React, { useState } from 'react'
-import { useController, Control, useFormContext, Controller } from 'react-hook-form'
+import { TextField } from '@mui/material'
+import { DateTimePicker } from '@mui/x-date-pickers'
+import { Control, Controller, useController, useFormContext } from 'react-hook-form'
 
 export type DateTimePickerProps = {
   name: string
@@ -20,9 +18,7 @@ export function DateTimePickerField({ name, control, label, ...rest }: DateTimeP
   })
 
   const methods = useFormContext()
-  const [tempValue, setTempValue] = useState(value)
 
-  console.log(error)
   return (
     <Controller
       name={name}
@@ -32,22 +28,11 @@ export function DateTimePickerField({ name, control, label, ...rest }: DateTimeP
           renderInput={(props) => (
             <TextField required {...props} error={!!error} helperText={error?.message} />
           )}
+          minDate={new Date()}
           onChange={(date) => field.onChange(date)}
           value={field.value}
         />
       )}
     />
-    // <DateTimePicker
-    //   // minDate={new Date()}
-    //   renderInput={(props) => (
-    //     <TextField required {...props} error={!!error} helperText={error?.message} />
-    //   )}
-    //   label={label}
-    //   value={tempValue}
-    //   {...methods.register(name)}
-    //   onChange={(newValue) => {
-    //     setTempValue(newValue)
-    //   }}
-    // />
   )
 }
