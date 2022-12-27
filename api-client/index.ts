@@ -1,2 +1,6 @@
 export * from './axiosClient'
 export * from './campaignApi'
+export * from './gameApi'
+export * from './quizApi'
+export * from './authApi'
+export * from './axiosClientJSON'

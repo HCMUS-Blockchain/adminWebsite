@@ -34,7 +34,6 @@ const proxy = httpProxy.createProxyServer()
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === 'POST' || req.method === 'PUT') {
     const x = await readFile(req)
-    console.log(x)
     const { name, numberOfVoucher, description, dateEnd, dateBegin, games, status, _id } = x.fields
     const start = dayjs(dateBegin.toString()).unix()
     const end = dayjs(dateEnd.toString()).unix()
@@ -63,7 +62,7 @@ const handler: NextApiHandler = async (req, res) => {
       foo._id = _id.toString()
     }
 
-    proxy.on('proxyReq', function (proxyReq, req, res, options) {
+    proxy.once('proxyReq', function (proxyReq, req, res, options) {
       let bodyData = JSON.stringify(foo)
       proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
       proxyReq.setHeader('Content-Type', 'application/json')

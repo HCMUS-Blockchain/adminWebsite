@@ -1,16 +1,14 @@
-import { EnhancedTable } from '@/components/campaigns'
+import { TableGames } from '@/components/games'
 import { MainLayout } from '@/components/layout'
 import { headCells } from '@/constants'
+import { gameCells } from '@/constants/GameCell'
 import { useCampaign } from '@/hooks'
-import AddIcon from '@mui/icons-material/Add'
-import { Box, Button, Divider, Typography } from '@mui/material'
+import { Box, Divider, Typography, Button } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-export interface CampaignsScreenProps {}
-
-function CampaignsScreen(props: CampaignsScreenProps) {
-  const route = useRouter()
+function GameScreen() {
+  const router = useRouter()
   const { data, getAllCampaigns } = useCampaign()
   useEffect(() => {
     const fetchData = async () => {
@@ -18,27 +16,29 @@ function CampaignsScreen(props: CampaignsScreenProps) {
     }
     fetchData()
   }, [])
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography component="h2" variant="h5">
-          Campaigns
+          Game Configuration
         </Typography>
         <Button
           variant="contained"
           color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => route.push('./campaigns/create')}
+          onClick={() => {
+            router.push('/games/collection')
+          }}
         >
-          Create
+          My Collection
         </Button>
       </Box>
       <Divider />
-      <EnhancedTable headCells={headCells} campaignList={data?.data.campaigns || []} />
+      <TableGames headCells={gameCells} campaignList={data?.data.campaigns || []} />
     </Box>
   )
 }
 
-CampaignsScreen.Layout = MainLayout
+GameScreen.Layout = MainLayout
 
-export default CampaignsScreen
+export default GameScreen

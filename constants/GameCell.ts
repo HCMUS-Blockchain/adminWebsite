@@ -1,9 +1,9 @@
 import { HeadCell } from '@/models'
 
-export const headCells: HeadCell[] = [
+export const gameCells: HeadCell[] = [
   {
     id: '_id',
-    numeric: true,
+    numeric: false,
     disablePadding: true,
     label: 'ID',
   },
@@ -13,19 +13,6 @@ export const headCells: HeadCell[] = [
     disablePadding: false,
     label: 'Name',
   },
-
-  {
-    id: 'dateBegin',
-    numeric: false,
-    disablePadding: false,
-    label: 'Start Date',
-  },
-  {
-    id: 'dateEnd',
-    numeric: false,
-    disablePadding: false,
-    label: 'End Date',
-  },
   {
     id: 'status',
     numeric: false,
@@ -34,14 +21,15 @@ export const headCells: HeadCell[] = [
   },
   {
     id: 'numberOfVoucher',
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: 'Quantity',
   },
+
   {
-    id: 'action',
-    numeric: false,
+    id: 'games',
+    numeric: true,
     disablePadding: false,
-    label: 'Action',
+    label: 'Games',
   },
 ]

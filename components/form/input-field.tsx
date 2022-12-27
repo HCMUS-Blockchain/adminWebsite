@@ -14,18 +14,15 @@ export function InputField({ name, ...rest }: InputFieldProps) {
   return (
     <TextField
       fullWidth
-      size="small"
       margin="normal"
       id="outlined-start-adornment"
       InputProps={{
         startAdornment: <InputAdornment position="start"></InputAdornment>,
       }}
-      sx={{ margin: '0' }}
       {...methods.register(name)}
       error={invalid}
       helperText={error?.message}
       {...rest}
-      color="secondary"
     />
   )
 }
