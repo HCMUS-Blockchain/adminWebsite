@@ -1,30 +1,21 @@
-import React from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Typography,
-  FormControl,
-  FormControlLabel,
-  Checkbox,
-  Stack,
-  TextField,
-  Link,
-  Avatar,
-  CssBaseline,
-  Input,
-} from '@mui/material'
-import { InputField } from '../form'
-import GoogleLogo from '@/images/google.svg'
-import GitHubLogo from '@/images/github.svg'
-import { OauthMuiLink } from '@/utils/login'
-import Image from 'next/image'
 import { useAuth } from '@/hooks'
 import { LoginPayload } from '@/models'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  CssBaseline,
+  FormControlLabel,
+  Grid,
+  Link,
+  Typography,
+} from '@mui/material'
 import { useRouter } from 'next/router'
+import { FormProvider, useForm } from 'react-hook-form'
+import { InputField } from '../form'
 export function LoginForm() {
   const methods = useForm({
     defaultValues: {

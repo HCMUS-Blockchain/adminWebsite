@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import httpProxy from 'http-proxy'
 import { Campaign } from '@/models'
 import Cookies from 'cookies'
+import { CounterPart } from '@/models/counterpart'
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -35,9 +36,7 @@ const proxy = httpProxy.createProxyServer()
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === 'POST' || req.method === 'PUT') {
     const x = await readFile(req)
-    const { name, numberOfVoucher, description, dateEnd, dateBegin, games, status, _id } = x.fields
-    const start = dayjs(dateBegin.toString()).unix()
-    const end = dayjs(dateEnd.toString()).unix()
+    const { fullName, nameOfShop, headquarter, phone, _id } = x.fields
     let imageSource
 
     if (Object.keys(x.files).length === 0) {
@@ -50,15 +49,13 @@ const handler: NextApiHandler = async (req, res) => {
       }
     }
 
-    let foo = {} as Campaign
-    foo.name = name.toString()
-    foo.numberOfVoucher = parseInt(numberOfVoucher.toString())
-    foo.description = description.toString()
-    foo.dateBegin = start
-    foo.dateEnd = end
+    let foo = {} as CounterPart
+    foo.fullName = fullName.toString()
+    foo.nameOfShop = nameOfShop.toString()
+    foo.headquarter = headquarter.toString()
+    foo.phone = phone.toString()
     foo.image = imageSource?.toString() || ''
-    foo.status = status.toString()
-    foo.games = games.toString().split(',')
+
     if (_id) {
       foo._id = _id.toString()
     }

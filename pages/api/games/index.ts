@@ -1,3 +1,4 @@
+import Cookies from 'cookies'
 import formidable from 'formidable'
 import httpProxy from 'http-proxy'
 import { NextApiHandler, NextApiRequest } from 'next'
@@ -22,9 +23,15 @@ const readFile = (
 }
 const handler: NextApiHandler = async (req, res) => {
   const x = await readFile(req)
-  console.log(x)
 
   return new Promise((resolve) => {
+    const cookies = new Cookies(req, res)
+    const accessToken = cookies.get('access_token')
+    if (accessToken) {
+      req.headers.Authorization = `JWT ${accessToken}`
+    }
+
+    req.headers.cookie = ''
     proxy.once('proxyReq', function (proxyReq, req, res, options) {
       let bodyData = JSON.stringify(x.fields)
       proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))

@@ -40,6 +40,7 @@ export function RegisterForm() {
   async function handleLoginSubmit(values: RegisterPayload) {
     try {
       values.role = 'Conterpart'
+      console.log(values)
       await register(values)
       route.push('/login')
     } catch (e) {

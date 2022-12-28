@@ -15,6 +15,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { Router } from 'mdi-material-ui'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -70,7 +71,7 @@ export function CollectionScreenDetail({ id }: CollectionScreenDetailProps) {
     name: 'question',
     control,
   })
-  const { data, createQuizCollection } = useQuiz()
+  const { data, createQuizCollection, updateQuizCollection } = useQuiz()
   const route = useRouter()
 
   useEffect(() => {
@@ -105,8 +106,18 @@ export function CollectionScreenDetail({ id }: CollectionScreenDetailProps) {
     form.append('title', data.title)
     form.append('description', data.description)
     form.append('questions', JSON.stringify(data.question))
-
-    await createQuizCollection(form)
+    try {
+      if (id) {
+        form.append('_id', id.toString())
+        await updateQuizCollection(form)
+        route.push('/games/collection')
+      } else {
+        await createQuizCollection(form)
+        route.push('/games/collection')
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
   return (
     <Box>

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import axiosClient from './axiosClient'
+import axiosClient from './axiosClientJSON'
 
 export const quizApi = {
   create(payload: any) {
@@ -10,5 +10,8 @@ export const quizApi = {
   },
   getAllQuizzes() {
     return axiosClient.get('/games/collection')
+  },
+  update(payload: any) {
+    return axiosClient.put('/games/collection', payload)
   },
 }

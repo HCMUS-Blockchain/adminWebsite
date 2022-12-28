@@ -1,7 +1,7 @@
-import { authApi, campaignApi } from '@/api-client'
-import { Campaign, LoginPayload, RegisterPayload } from '@/models'
-import { profile } from 'console'
+import { authApi } from '@/api-client'
+import { LoginPayload, RegisterPayload } from '@/models'
 import useSWR from 'swr'
+
 export function useAuth() {
   const {
     data: profile,
@@ -21,12 +21,19 @@ export function useAuth() {
 
   async function register(payload: RegisterPayload) {
     await authApi.create(payload)
-    mutate({}, false)
+    // mutate({}, false)
   }
+
+  async function logout() {
+    await authApi.logout()
+    mutate(null, false)
+  }
+
   return {
     profile,
     error,
     login,
+    logout,
     register,
     firstLoading,
   }

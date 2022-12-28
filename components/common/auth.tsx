@@ -8,8 +8,10 @@ export function Auth({ children }: { children: any }) {
 
   const { profile, firstLoading } = useAuth()
   useEffect(() => {
-    if (!firstLoading && !profile.data?._id) router.push('/login')
+    if (!firstLoading && !profile?.data?._id) {
+      router.push('/login')
+    }
   }, [router, profile, firstLoading])
-  if (!profile.data?._id) return <CircularProgress />
+  if (!profile?.data?._id) return <CircularProgress />
   return <div>{children}</div>
 }

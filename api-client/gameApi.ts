@@ -1,5 +1,5 @@
 import axios from 'axios'
-import axiosClient from './axiosClient'
+import axiosClient from './axiosClientJSON'
 
 export const gameApi = {
   create(payload: any) {
