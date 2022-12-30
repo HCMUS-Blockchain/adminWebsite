@@ -30,6 +30,7 @@ const game = createSlice({
           state.game1.findIndex((arrow: any) => arrow.point === removeId),
           1
         )
+        console.log(state.game1)
       } else if (action.payload.id === '2') {
         state.game2.splice(
           state.game2.findIndex((arrow: any) => arrow.point === removeId),

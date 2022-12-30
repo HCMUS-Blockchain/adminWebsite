@@ -14,18 +14,17 @@ import {
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
+import { useQuiz } from '@/hooks'
 
 function CollectionScreen() {
   const [list, setList] = useState([])
   const router = useRouter()
-
+  const { data } = useQuiz()
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await quizApi.getAllQuizzes()
-      setList(res.data.quizzes)
+    if (data) {
+      setList(data.data.quizzes)
     }
-    fetchData()
-  }, [])
+  }, [data])
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>

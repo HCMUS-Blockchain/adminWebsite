@@ -10,12 +10,12 @@ import { useEffect } from 'react'
 function GameScreen() {
   const router = useRouter()
   const { data, getAllCampaigns } = useCampaign()
-  useEffect(() => {
-    const fetchData = async () => {
-      await getAllCampaigns()
-    }
-    fetchData()
-  }, [])
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     await getAllCampaigns()
+  //   }
+  //   fetchData()
+  // }, [])
 
   return (
     <Box>

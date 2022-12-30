@@ -128,14 +128,15 @@ export function GameDetail({ name }: GameDetailProps) {
     let newArr = value.filter((object) => {
       return object.point !== item
     })
+
     setValue(newArr)
     let action
     if (name === '2048') {
-      action = remove({ id: '1', point: point })
+      action = remove({ id: '1', point: item })
     } else if (name === 'Jump with doctor strange') {
-      action = remove({ id: '2', point: point })
+      action = remove({ id: '2', point: item })
     } else {
-      action = remove({ id: '3', point: point })
+      action = remove({ id: '3', point: item })
     }
     dispatch(action)
   }

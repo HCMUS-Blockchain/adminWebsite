@@ -1,6 +1,6 @@
 import { GameDetail } from '@/components/games'
 import { MainLayout } from '@/components/layout'
-import { useCampaign, useGame } from '@/hooks'
+import { useAuth, useCampaign, useCounterPart } from '@/hooks'
 import { Campaign } from '@/models'
 import { Box, Button, Divider, Grid, Stack, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -17,11 +17,16 @@ function GameDetailScreen() {
   const { data } = useCampaign()
   const router = useRouter()
   const id = router.query.id?.toString()
-  const games = getGame(data.data.campaigns, id || '') || []
+  const [games, setGames] = useState<string[]>([])
   const state = useAppSelector((state) => state.games)
   const [isUpdate, setIsUpdate] = useState(false)
   const dispatch = useAppDispatch()
-
+  useEffect(() => {
+    if (data) {
+      const temp = getGame(data.data.campaigns, id || '') || []
+      setGames(temp)
+    }
+  }, [data])
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
@@ -85,7 +90,7 @@ function GameDetailScreen() {
       <Divider />
 
       <Grid container spacing={2}>
-        {games.map((name) => (
+        {games.map((name: any) => (
           <Grid item xs={12 / games.length} key={name}>
             <Stack spacing={2}>
               <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
