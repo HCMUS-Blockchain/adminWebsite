@@ -58,7 +58,7 @@ function TableEmployeeHead(props: TableEmpoyeeHeadProps) {
 
 export function TableEmployees(props: EnhancedTableEmployeesProps) {
   const [order, setOrder] = React.useState<Order>('asc')
-  const [orderBy, setOrderBy] = React.useState<keyof Employee>('id')
+  const [orderBy, setOrderBy] = React.useState<keyof Employee>('employeeID')
   const [selected, setSelected] = React.useState<string[]>([])
   const [page, setPage] = React.useState(0)
   const [dense, setDense] = React.useState(false)
@@ -86,6 +86,11 @@ export function TableEmployees(props: EnhancedTableEmployeesProps) {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - employeeList.length) : 0
 
+  const updateEmployee = (_id: String) => {
+    props.setOpenDialog(true)
+    const employeeUpdate = employeeList.find((e: any) => e._id === _id)
+    props.setEmployeeUpdate(employeeUpdate)
+  }
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -110,7 +115,13 @@ export function TableEmployees(props: EnhancedTableEmployeesProps) {
                   const labelId = `enhanced-table-checkbox-${index}`
 
                   return (
-                    <TableRow hover color="info" tabIndex={-1} key={row.id}>
+                    <TableRow
+                      hover
+                      color="info"
+                      tabIndex={-1}
+                      key={row.employeeID}
+                      onClick={() => updateEmployee(row._id.toString())}
+                    >
                       <TableCell
                         component="th"
                         id={labelId}
@@ -118,7 +129,7 @@ export function TableEmployees(props: EnhancedTableEmployeesProps) {
                         padding="none"
                         align="center"
                       >
-                        <Link href={`/games/${row.id}`}>{row.id.toString().slice(-5)}</Link>
+                        {row.employeeID.toString()}
                       </TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">{row.phone}</TableCell>

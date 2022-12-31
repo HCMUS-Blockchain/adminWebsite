@@ -84,7 +84,6 @@ export function HeaderComponent(props: Props) {
   const open = Boolean(anchorEl)
 
   const { profile } = useAuth()
-  console.log(profile)
   const { logout } = useAuth()
   const router = useRouter()
   const handleDrawerToggle = () => {

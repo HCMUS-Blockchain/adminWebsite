@@ -3,12 +3,17 @@ import { MainLayout } from '@/components/layout'
 import { employeeCell } from '@/constants'
 import { Box, Divider, Typography, IconButton, Menu, MenuItem } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import React from 'react'
-import { DialogComponent } from './form-dialog'
+import React, { useEffect } from 'react'
+import { DialogComponent } from '../../components/employees/form-dialog'
+import { useEmployee } from '@/hooks'
 
 function EmployeeScreen() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [openDialog, setOpenDialog] = React.useState(false)
+  const [employeeList, setEmployeeList] = React.useState<any[]>([])
+  const [employeeUpdate, setEmployeeUpdate] = React.useState({})
   const open = Boolean(anchorEl)
+  const { data } = useEmployee()
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
@@ -16,7 +21,18 @@ function EmployeeScreen() {
     setAnchorEl(null)
   }
 
-  const addOneEmployee = () => {}
+  const addOneEmployee = () => {
+    setOpenDialog(true)
+  }
+  useEffect(() => {
+    if (data) {
+      if (data.data) {
+        setEmployeeList(data.data.employees)
+      } else {
+        setEmployeeList(data)
+      }
+    }
+  }, [data])
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
@@ -41,14 +57,24 @@ function EmployeeScreen() {
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem onClick={handleClose}>Add a employee</MenuItem>
+          <MenuItem onClick={addOneEmployee}>Add a employee</MenuItem>
           <MenuItem onClick={handleClose}>Import</MenuItem>
           <MenuItem onClick={handleClose}>Export</MenuItem>
         </Menu>
-        <DialogComponent />
       </Box>
+      <DialogComponent
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+        employeeUpdate={employeeUpdate}
+      />
+
       <Divider />
-      <TableEmployees headCells={employeeCell} employeeList={[]} />
+      <TableEmployees
+        headCells={employeeCell}
+        employeeList={employeeList}
+        setOpenDialog={setOpenDialog}
+        setEmployeeUpdate={setEmployeeUpdate}
+      />
     </Box>
   )
 }

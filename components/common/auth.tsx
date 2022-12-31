@@ -7,6 +7,7 @@ export function Auth({ children }: { children: any }) {
   const router = useRouter()
 
   const { profile, firstLoading } = useAuth()
+
   useEffect(() => {
     if (!firstLoading && !profile?.data?._id) {
       router.push('/login')

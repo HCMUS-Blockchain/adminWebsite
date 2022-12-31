@@ -10,7 +10,8 @@ export interface TableEmpoyeeHeadProps {
 }
 
 export interface Employee {
-  id: string
+  _id: string
+  employeeID: string
   name: string
   phone: string
   email: string
@@ -20,6 +21,8 @@ export interface Employee {
 export interface EnhancedTableEmployeesProps {
   headCells: Array<EmployeeHeadCell>
   employeeList: any
+  setOpenDialog: any
+  setEmployeeUpdate: any
 }
 
 export interface EmployeeHeadCell {

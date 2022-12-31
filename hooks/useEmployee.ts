@@ -8,10 +8,17 @@ export function useEmployee() {
 
   async function createEmployee(payload: any) {
     await employeeApi.create(payload)
+    mutate([...data.data.employees, payload], true)
+  }
+
+  async function updateEmployee(payload: any) {
+    await employeeApi.update(payload)
+    mutate([...data.data.employees, payload], true)
   }
   return {
     data,
     error,
     createEmployee,
+    updateEmployee,
   }
 }
