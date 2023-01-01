@@ -7,6 +7,7 @@ export interface TableEmpoyeeHeadProps {
   orderBy: string
   rowCount: number
   headCells: EmployeeHeadCell[]
+  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export interface Employee {
@@ -16,6 +17,7 @@ export interface Employee {
   phone: string
   email: string
   position: string
+  action: string
 }
 
 export interface EnhancedTableEmployeesProps {

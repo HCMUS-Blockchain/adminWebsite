@@ -2,7 +2,7 @@ import { EmployeeHeadCell } from '@/models'
 
 export const employeeCell: EmployeeHeadCell[] = [
   {
-    id: 'id',
+    id: '_id',
     numeric: false,
     disablePadding: true,
     label: 'ID',
@@ -31,5 +31,11 @@ export const employeeCell: EmployeeHeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: 'Position',
+  },
+  {
+    id: 'action',
+    numeric: false,
+    disablePadding: false,
+    label: 'Action',
   },
 ]

@@ -2,32 +2,30 @@ import { Color } from '@/constants'
 import { useCampaign } from '@/hooks'
 import {
   Campaign,
+  EnhancedTableHeadProps,
   EnhancedTableProps,
   EnhancedTableToolbarProps,
   Order,
-  EnhancedTableHeadProps,
 } from '@/models/campaign'
 import { getComparator, stableSort } from '@/utils/campaigns'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FilterListIcon from '@mui/icons-material/FilterList'
-import UpdateIcon from '@mui/icons-material/Update'
-import { useEffect, useState } from 'react'
 import {
   alpha,
   Box,
+  Button,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControlLabel,
   IconButton,
   Paper,
   Switch,
   Table,
-  Dialog,
-  DialogContent,
-  Button,
-  DialogContentText,
-  DialogActions,
   TableBody,
-  DialogTitle,
   TableCell,
   TableContainer,
   TableHead,
@@ -40,9 +38,9 @@ import {
 } from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
 
-import * as React from 'react'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import * as React from 'react'
 
 function EnhancedTableHead(props: EnhancedTableHeadProps) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells } =

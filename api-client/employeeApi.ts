@@ -7,4 +7,10 @@ export const employeeApi = {
   update(payload: any) {
     return axiosClient.put('/employees', payload)
   },
+  delete(id: string) {
+    return axiosClient.delete(`/employees/${id}`)
+  },
+  deleteMultipleEmployees(id: Array<string>) {
+    return axiosClient.delete('/employees', { params: id })
+  },
 }

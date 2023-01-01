@@ -6,12 +6,14 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import React, { useEffect } from 'react'
 import { DialogComponent } from '../../components/employees/form-dialog'
 import { useEmployee } from '@/hooks'
+import { CSVLink } from 'react-csv'
 
 function EmployeeScreen() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [openDialog, setOpenDialog] = React.useState(false)
   const [employeeList, setEmployeeList] = React.useState<any[]>([])
   const [employeeUpdate, setEmployeeUpdate] = React.useState({})
+  const [result, setResult] = React.useState([])
   const open = Boolean(anchorEl)
   const { data } = useEmployee()
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -24,15 +26,22 @@ function EmployeeScreen() {
   const addOneEmployee = () => {
     setOpenDialog(true)
   }
+
   useEffect(() => {
     if (data) {
       if (data.data) {
+        const result = data.data.employees.map((item: any) => {
+          const { _id, ownerID, __v, ...result } = item
+          return result
+        })
         setEmployeeList(data.data.employees)
+        setResult(result)
       } else {
         setEmployeeList(data)
       }
     }
   }, [data])
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
@@ -59,7 +68,9 @@ function EmployeeScreen() {
         >
           <MenuItem onClick={addOneEmployee}>Add a employee</MenuItem>
           <MenuItem onClick={handleClose}>Import</MenuItem>
-          <MenuItem onClick={handleClose}>Export</MenuItem>
+          <MenuItem>
+            <CSVLink data={result}>Export</CSVLink>
+          </MenuItem>
         </Menu>
       </Box>
       <DialogComponent
