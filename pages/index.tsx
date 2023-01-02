@@ -1,32 +1,177 @@
 import { MainLayout } from '@/components/layout'
-import { Box, Toolbar, Typography } from '@mui/material'
+import { Box, MenuItem, Paper, TextField, Tooltip, Typography } from '@mui/material'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { NextPageWithLayout } from '../models'
+import Grid from '@mui/material/Grid'
+
+const filter = [
+  {
+    value: 'Today ',
+    label: 'Today',
+  },
+  {
+    value: 'Yesterday',
+    label: 'Yesterday',
+  },
+  {
+    value: 'Last week',
+    label: 'Last week',
+  },
+  {
+    value: 'Last year',
+    label: 'Last year',
+  },
+]
 const Home: NextPageWithLayout = () => {
   return (
     <>
-      <Typography paragraph>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-        labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum facilisis leo
-        vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum quisque
-        non tellus. Convallis convallis tellus id interdum velit laoreet id donec ultrices. Odio
-        morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit adipiscing bibendum est
-        ultricies integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate eu
-        scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis imperdiet massa
-        tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget arcu dictum
-        varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-        sapien faucibus et molestie ac.
+      <Typography component="h3" variant="h4">
+        Hello, Thanh Ngoc
       </Typography>
-      <Typography paragraph>
-        Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
-        facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac tincidunt.
-        Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat
-        mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed vulputate
-        odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-        gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et tortor.
-        Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin nibh sit.
-        Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas accumsan lacus
-        vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
-      </Typography>
+      <Paper>
+        <Box
+          sx={{ display: 'flex', justifyContent: 'space-between', p: 2, alignContent: 'center' }}
+        >
+          <Typography variant="h6" p={2}>
+            Statistic General
+          </Typography>
+          <TextField
+            id="outlined-select-currency"
+            select
+            defaultValue="Today"
+            sx={{
+              width: '200px',
+            }}
+            color="secondary"
+          >
+            {filter.map((option) => (
+              <MenuItem
+                key={option.value}
+                value={option.value}
+                color="secondary"
+                sx={{ color: '#00ABCC' }}
+              >
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+        <Grid container spacing={2}>
+          <Grid item xs={3}>
+            <Paper sx={{ p: 2, m: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography>Campaign</Typography>
+                <Tooltip title="AA">
+                  <HelpOutlineIcon />
+                </Tooltip>
+              </Box>
+
+              <Box display="flex" justifyContent="space-between">
+                <Typography variant="h4" fontWeight="bold">
+                  256
+                </Typography>
+                <Box
+                  width="100px"
+                  sx={{ display: 'flex', direction: 'row', justifyContent: 'space-around' }}
+                  alignSelf="center"
+                >
+                  <Box bgcolor="rgba(255,0,0,0.2)" width="50px">
+                    <Typography color="red" fontWeight="bold" textAlign="center">
+                      -5.2%
+                    </Typography>
+                  </Box>
+                  <ArrowUpwardIcon sx={{ color: 'red' }} />
+                </Box>
+              </Box>
+            </Paper>
+          </Grid>
+          <Grid item xs={3}>
+            <Paper sx={{ p: 2, m: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography>Campaign</Typography>
+                <Tooltip title="AA">
+                  <HelpOutlineIcon />
+                </Tooltip>
+              </Box>
+
+              <Box display="flex" justifyContent="space-between">
+                <Typography variant="h4" fontWeight="bold">
+                  256
+                </Typography>
+                <Box
+                  width="100px"
+                  sx={{ display: 'flex', direction: 'row', justifyContent: 'space-around' }}
+                  alignSelf="center"
+                >
+                  <Box bgcolor="rgba(255,0,0,0.2)" width="50px">
+                    <Typography color="red" fontWeight="bold" textAlign="center">
+                      -5.2%
+                    </Typography>
+                  </Box>
+                  <ArrowUpwardIcon sx={{ color: 'red' }} />
+                </Box>
+              </Box>
+            </Paper>
+          </Grid>
+          <Grid item xs={3}>
+            <Paper sx={{ p: 2, m: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography>Campaign</Typography>
+                <Tooltip title="AA">
+                  <HelpOutlineIcon />
+                </Tooltip>
+              </Box>
+
+              <Box display="flex" justifyContent="space-between">
+                <Typography variant="h4" fontWeight="bold">
+                  256
+                </Typography>
+                <Box
+                  width="100px"
+                  sx={{ display: 'flex', direction: 'row', justifyContent: 'space-around' }}
+                  alignSelf="center"
+                >
+                  <Box bgcolor="rgba(255,0,0,0.2)" width="50px">
+                    <Typography color="red" fontWeight="bold" textAlign="center">
+                      -5.2%
+                    </Typography>
+                  </Box>
+                  <ArrowUpwardIcon sx={{ color: 'red' }} />
+                </Box>
+              </Box>
+            </Paper>
+          </Grid>
+          <Grid item xs={3}>
+            <Paper sx={{ p: 2, m: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography>Campaign</Typography>
+                <Tooltip title="AA">
+                  <HelpOutlineIcon />
+                </Tooltip>
+              </Box>
+
+              <Box display="flex" justifyContent="space-between">
+                <Typography variant="h4" fontWeight="bold">
+                  256
+                </Typography>
+                <Box
+                  width="100px"
+                  sx={{ display: 'flex', direction: 'row', justifyContent: 'space-around' }}
+                  alignSelf="center"
+                >
+                  <Box bgcolor="rgba(60, 179, 113,0.2)" width="50px">
+                    <Typography color="rgb(60, 179, 113)" fontWeight="bold" textAlign="center">
+                      15.2%
+                    </Typography>
+                  </Box>
+                  <ArrowUpwardIcon sx={{ color: 'rgb(60, 179, 113)' }} />
+                </Box>
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Paper>
     </>
   )
 }

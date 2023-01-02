@@ -77,10 +77,11 @@ export function DialogComponent({ openDialog, setOpenDialog, employeeUpdate }: D
 
   const handleFormSubmit = async (values: any) => {
     try {
-      if (employeeUpdate) {
+      if (employeeUpdate._id) {
         values._id = employeeUpdate._id
         await updateEmployee(values)
       } else {
+        console.log(values)
         await createEmployee(values)
       }
       setOpenDialog(false)
@@ -147,9 +148,8 @@ export function DialogComponent({ openDialog, setOpenDialog, employeeUpdate }: D
                 fullWidth
                 variant="standard"
                 label="Position"
-                defaultValue="Staff"
                 onChange={onChange}
-                value={value}
+                value={value || ''}
                 helperText="Please select your position"
                 required
               >

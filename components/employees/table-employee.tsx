@@ -30,7 +30,7 @@ import {
 import { visuallyHidden } from '@mui/utils'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FilterListIcon from '@mui/icons-material/FilterList'
-
+import Papa from 'papaparse'
 import * as React from 'react'
 import { useEmployee } from '@/hooks'
 
@@ -116,7 +116,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </Typography>
       ) : (
         <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-          Campaigns
+          Employees List
         </Typography>
       )}
       {numSelected > 0 ? (
@@ -166,7 +166,9 @@ export function TableEmployees(props: EnhancedTableEmployeesProps) {
   const [dense, setDense] = React.useState(false)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
   const [open, setOpen] = React.useState(false)
+
   const { deleteEmployee } = useEmployee()
+
   const { headCells, employeeList } = props
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Employee) => {
@@ -264,11 +266,15 @@ export function TableEmployees(props: EnhancedTableEmployeesProps) {
               {stableSort(employeeList, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row._id.toString())
-                  const labelId = `enhanced-table-checkbox-${index}`
+                  let isItemSelected = false,
+                    labelId = ''
+                  if (row._id) {
+                    isItemSelected = isSelected(row._id.toString())
+                    labelId = `enhanced-table-checkbox-${index}`
+                  }
 
                   return (
-                    <TableRow hover color="info" tabIndex={-1} key={row.employeeID}>
+                    <TableRow hover color="info" tabIndex={-1} key={index}>
                       <TableCell padding="checkbox">
                         <Checkbox
                           color="primary"
@@ -288,7 +294,7 @@ export function TableEmployees(props: EnhancedTableEmployeesProps) {
                         onClick={() => updateEmployee(row._id.toString())}
                         sx={{ cursor: 'pointer' }}
                       >
-                        {row.employeeID.toString()}
+                        {row.employeeID ? row.employeeID.toString() : ''}
                       </TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">{row.phone}</TableCell>

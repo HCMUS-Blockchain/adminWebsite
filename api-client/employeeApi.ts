@@ -13,4 +13,7 @@ export const employeeApi = {
   deleteMultipleEmployees(id: Array<string>) {
     return axiosClient.delete('/employees', { params: id })
   },
+  changeAllEmployees(payload: any) {
+    return axiosClient.post('/employees/all', payload)
+  },
 }

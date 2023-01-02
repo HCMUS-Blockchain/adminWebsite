@@ -31,12 +31,18 @@ export function useEmployee() {
     mutate(data, true)
   }
 
+  async function changeAllEmployees(payload: any) {
+    await employeeApi.changeAllEmployees(payload)
+    mutate([], true)
+  }
+
   return {
     data,
     error,
     createEmployee,
     updateEmployee,
     deleteEmployee,
+    changeAllEmployees,
     deleteMultipleEmployees,
   }
 }
