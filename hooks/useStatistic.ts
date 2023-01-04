@@ -8,8 +8,8 @@ export function useStatistic() {
   })
 
   async function getGeneralStatis(option: string) {
-    await statisticApi.getGeneralStatistic(option)
-    mutate()
+    const x = await statisticApi.getGeneralStatistic(option)
+    mutate(x, true)
   }
   return {
     data,
