@@ -1,14 +1,20 @@
 import { MainLayout } from '@/components/layout'
-import { Box, MenuItem, Paper, TextField, Tooltip, Typography } from '@mui/material'
+import { Box, MenuItem, Paper, TextField, Tooltip, Typography, Stack } from '@mui/material'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import ArrowDownWardIcon from '@mui/icons-material/ArrowDownward'
 import { NextPageWithLayout } from '../models'
 import Grid from '@mui/material/Grid'
-import { useStatistic } from '@/hooks'
+import { useStatistic, useCampaign } from '@/hooks'
 import { statisticApi } from '@/api-client'
 import { useEffect, useState } from 'react'
 import { LineChart } from '@/components/dashboard'
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import dayjs from 'dayjs'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import Button from '@mui/material/Button'
+import { useForm } from 'react-hook-form'
+import { DateTimePickerField } from '@/components/form'
 
 const filter = [
   {
@@ -55,6 +61,10 @@ const Home: NextPageWithLayout = () => {
   // const { data, getGeneralStatis } = useStatistic()
   const [data, setData] = useState(generalManagement)
   const [option, setOption] = useState('day')
+  const [value, setValue] = useState(dayjs('2014-08-18T21:11:54'))
+  const [campaignList, setCampaignList] = useState([])
+  const { data: campaignData } = useCampaign()
+  const { register, handleSubmit, control } = useForm()
   const handleChange = async (e: any) => {
     const result = await statisticApi.getGeneralStatistic(e.target.value)
     if (e.target.value === 'today') {
@@ -118,6 +128,11 @@ const Home: NextPageWithLayout = () => {
       </Typography>
     )
   }
+
+  const handleChangeSubmit = async (values: any) => {
+    await statisticApi.getVoucherStatistic(values)
+    console.log(values)
+  }
   // console.log(data)
   useEffect(() => {
     async function fetch() {
@@ -126,7 +141,16 @@ const Home: NextPageWithLayout = () => {
     }
     fetch()
   }, [])
-  console.log(data)
+
+  useEffect(() => {
+    if (campaignData) {
+      const tempCampaignList = campaignData.data.campaigns.map((item: any) => ({
+        _id: item._id,
+        name: item.name,
+      }))
+      setCampaignList(campaignData.data.campaigns)
+    }
+  }, [campaignData])
   return (
     <>
       <Typography component="h3" variant="h4">
@@ -221,7 +245,44 @@ const Home: NextPageWithLayout = () => {
               ))}
         </Grid>
       </Paper>
-      <LineChart />
+      <Paper>
+        <Box
+          sx={{ display: 'flex', justifyContent: 'space-between', p: 2, alignContent: 'center' }}
+        >
+          <Typography variant="h6" p={2}>
+            Voucher Statistic
+          </Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Stack
+              direction="row"
+              spacing={2}
+              pt={2}
+              component="form"
+              onSubmit={handleSubmit(handleChangeSubmit)}
+            >
+              <TextField
+                id="outlined-select-campaign"
+                select
+                label="Select"
+                defaultValue=""
+                helperText="Please select your campaign"
+                {...register('option')}
+              >
+                {campaignList.map((option: any) => (
+                  <MenuItem key={option._id} value={option._id}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <DateTimePickerField name="startDate" control={control} label="Start Date" />
+              <DateTimePickerField name="endDate" control={control} label="End Date" />
+              <Button type="submit">Show</Button>
+            </Stack>
+          </LocalizationProvider>
+        </Box>
+
+        <LineChart />
+      </Paper>
     </>
   )
 }

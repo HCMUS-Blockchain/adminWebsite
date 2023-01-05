@@ -28,7 +28,7 @@ export function DateTimePickerField({ name, control, label, ...rest }: DateTimeP
           renderInput={(props) => (
             <TextField required {...props} error={!!error} helperText={error?.message} />
           )}
-          minDate={new Date()}
+          // minDate={new Date()}
           onChange={(date) => field.onChange(date)}
           value={field.value}
         />
