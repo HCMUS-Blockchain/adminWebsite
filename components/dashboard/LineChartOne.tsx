@@ -13,7 +13,7 @@ import { Line } from 'react-chartjs-2'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
-export const options = {
+const options = {
   responsive: true,
   plugins: {
     legend: {
@@ -26,27 +26,20 @@ export const options = {
   },
 }
 
-export interface LineChartInterface {
+export interface LineChartOneInterface {
   dayOfTheYear: Array<any>
-  usedVoucher: Array<number>
-  releaseVoucher: Array<number>
+  user: Array<number>
 }
 
-export function LineChart({ dayOfTheYear, usedVoucher, releaseVoucher }: LineChartInterface) {
+export function LineChartOne({ dayOfTheYear, user }: LineChartOneInterface) {
   const [data, setData] = useState<any>({
     labels: [],
     datasets: [
       {
-        label: 'Release Voucher',
+        label: 'Total Users Which Participated In',
         data: [],
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      },
-      {
-        label: 'Used Voucher',
-        data: [],
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },
     ],
   })
@@ -58,24 +51,18 @@ export function LineChart({ dayOfTheYear, usedVoucher, releaseVoucher }: LineCha
   }, [dayOfTheYear])
 
   useEffect(() => {
-    if (usedVoucher || releaseVoucher) {
+    if (user) {
       const datasets = [
         {
-          label: 'Release Voucher',
-          data: releaseVoucher,
+          label: 'Total Users Which Participated In',
+          data: user,
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        },
-        {
-          label: 'Used Voucher',
-          data: usedVoucher,
-          borderColor: 'rgb(53, 162, 235)',
-          backgroundColor: 'rgba(53, 162, 235, 0.5)',
         },
       ]
 
       setData({ ...data, datasets: datasets })
     }
-  }, [usedVoucher, releaseVoucher])
+  }, [user])
   return <Line options={options} data={data} />
 }

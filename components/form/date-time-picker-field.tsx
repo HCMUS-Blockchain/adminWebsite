@@ -16,6 +16,7 @@ export function DateTimePickerField({ name, control, label, ...rest }: DateTimeP
     name,
     control,
   })
+  console.log(error)
 
   const methods = useFormContext()
 

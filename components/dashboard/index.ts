@@ -1,1 +1,5 @@
 export * from './LineChart'
+export * from './DoughnutChart'
+export * from './VerticalBarChart'
+export * from './LineChartOne'
+export * from './DashboardComponent'
