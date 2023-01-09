@@ -9,6 +9,7 @@ import { SWRConfig } from 'swr'
 import axiosClient from '@/api-client/axiosClient'
 import { Provider } from 'react-redux'
 import store from 'app/store'
+
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
 
