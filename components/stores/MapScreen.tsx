@@ -1,46 +1,80 @@
-import { useState } from 'react'
-import Map, { Marker } from 'react-map-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import {
-  GeoapifyGeocoderAutocomplete,
-  GeoapifyContext,
-} from '@geoapify/react-geocoder-autocomplete'
+import { useStore } from '@/hooks'
 import '@geoapify/geocoder-autocomplete/styles/minimal.css'
+import { Tooltip, Box, Typography } from '@mui/material'
+import 'mapbox-gl/dist/mapbox-gl.css'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import Map, { Marker, Popup } from 'react-map-gl'
 
 export default function MapScreen() {
-  // const [viewport, setViewport] = useState({
+  const { data } = useStore()
+  const [markers, setMarkers] = useState([])
+  const [info, setInfo] = useState<any>()
+  const [initialViewState, setInitialViewState] = useState<any>()
 
-  //   // The latitude and longitude of the center of London
-  //   latitude: 10.765963704951895,
-  //   longitude: 106.69705000164117,
-  //   zoom: 15,
-  // })
-  function onPlaceSelect(value: any) {
-    console.log(value)
+  useEffect(() => {
+    if (data) setMarkers(data.data.stores)
+  }, [data])
+
+  const handleClick = (item: any) => {
+    setInfo(item)
   }
 
-  function onSuggectionChange(value: any) {
-    console.log(value)
+  const position = async () => {
+    await navigator.geolocation.getCurrentPosition(function (position) {
+      setInitialViewState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        zoom: 15,
+      })
+    })
   }
+
+  position()
+
+  console.log(initialViewState)
+
+  // const closePopUp = () => {
+  //   setInfo(undefined)
+  // }
+  // console.log(info)
   return (
     <>
       <Map
         initialViewState={{
-          latitude: 10.765932085198404,
-          longitude: 106.69700708586993,
-          zoom: 14,
+          latitude: 10.762563013932072,
+          longitude: 106.68246451403486,
+          zoom: 15,
         }}
-        style={{ width: 800, height: 600 }}
+        style={{ width: 900, height: 600 }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAP_BOX_API}
       >
-        {/* <GeoapifyContext apiKey={process.env.NEXT_PUBLIC_GEOAPIFY_API}>
-          <GeoapifyGeocoderAutocomplete
-            placeSelect={onPlaceSelect}
-            suggestionsChange={onSuggectionChange}
-          />
-        </GeoapifyContext> */}
-        <Marker longitude={106.69700708586993} latitude={10.765932085198404} color="red" />
+        {markers
+          ? markers.map((item: any) => (
+              <Marker
+                key={item._id}
+                longitude={item.coordinates.longitude}
+                latitude={item.coordinates.latitude}
+                color="red"
+                onClick={() => handleClick(item)}
+              />
+            ))
+          : null}
+        {!!info && (
+          <Popup
+            longitude={info.coordinates.longitude}
+            latitude={info.coordinates.latitude}
+            anchor="top"
+            closeOnClick={false}
+            onClose={() => setInfo(null)}
+          >
+            <Box>
+              <Typography>{info.title}</Typography>
+              <Image alt="image" src={info.image} width={100} height={100} />
+            </Box>
+          </Popup>
+        )}
       </Map>
     </>
   )

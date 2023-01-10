@@ -13,4 +13,7 @@ export const storesApi = {
   getStore(id: string) {
     return axiosClient.get(`/stores/${id}`)
   },
+  deleteStore(_id: string) {
+    return axiosClient.delete(`/stores/${_id}`)
+  },
 }

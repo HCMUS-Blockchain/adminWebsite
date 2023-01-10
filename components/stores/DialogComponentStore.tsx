@@ -25,38 +25,57 @@ export interface DiaglogComponentStoreInterface {
   open: boolean
   setOpen: any
   store: any
+  setStore: any
 }
 export default function DiaglogComponentStore({
   open,
   setOpen,
   store,
+  setStore,
 }: DiaglogComponentStoreInterface) {
-  const [singleFile, setSingleFile] = React.useState<File>()
+  const [singleFile, setSingleFile] = React.useState<any>()
   const [fileUpdate, setFileUpdate] = React.useState<any>()
   const [address, setAddress] = React.useState<any>()
 
-  const { createStore } = useStore()
+  const { createStore, updateStore } = useStore()
   const { register, control, handleSubmit, setValue } = useForm()
   function onPlaceSelect(value: any) {
     setAddress(value)
   }
 
   React.useEffect(() => {
-    if (store) {
+    if (!store) {
+      setValue('title', '')
+      setValue('description', '')
+      setValue('image', undefined)
+      setFileUpdate(undefined)
+      setAddress(undefined)
+    } else {
       setValue('title', store.title)
       setValue('description', store.description)
+      setValue('image', store.image)
       setFileUpdate(store.image)
       setAddress(store.address)
     }
   }, [store])
 
   const handleSubmitForm = async (values: any) => {
-    if (address) {
+    if (typeof address === 'string') {
+      values.coordinates = store.coordinates.latitude + ',' + store.coordinates.longitude
+      values.address = store.address
+    } else if (address) {
       values.coordinates = address.geometry.coordinates.toString()
       values.address = address.properties.formatted
     }
     try {
-      await createStore(values)
+      if (store) {
+        values._id = store._id
+        await updateStore(values)
+        setStore(undefined)
+      } else {
+        await createStore(values)
+      }
+      setOpen(false)
     } catch (e) {
       console.log(e)
     }
@@ -98,6 +117,7 @@ export default function DiaglogComponentStore({
 
   const handleClose = () => {
     setOpen(false)
+    setStore(undefined)
   }
   return (
     <div>
@@ -178,7 +198,11 @@ export default function DiaglogComponentStore({
             <TextField label="Title" {...register('title')} />
             <TextField label="Description" multiline={true} rows={4} {...register('description')} />
             <GeoapifyContext apiKey={process.env.NEXT_PUBLIC_GEOAPIFY_API}>
-              <GeoapifyGeocoderAutocomplete placeSelect={onPlaceSelect} lang="vi" value={address} />
+              <GeoapifyGeocoderAutocomplete
+                placeSelect={onPlaceSelect}
+                lang="vi"
+                value={address?.properties ? address.properties.formatted : address}
+              />
             </GeoapifyContext>
           </Stack>
         </DialogContent>

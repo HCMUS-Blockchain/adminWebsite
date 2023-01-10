@@ -55,6 +55,7 @@ const handler: NextApiHandler = async (req, res) => {
     if (_id) {
       foo._id = _id.toString()
     }
+    console.log(foo)
 
     proxy.once('proxyReq', function (proxyReq, req, res, options) {
       let bodyData = JSON.stringify(foo)
