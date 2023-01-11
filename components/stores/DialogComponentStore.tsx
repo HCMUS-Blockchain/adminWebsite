@@ -10,6 +10,8 @@ import {
   DialogActions,
   Button,
 } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
+import SaveIcon from '@mui/icons-material/Save'
 import * as React from 'react'
 import {
   GeoapifyGeocoderAutocomplete,
@@ -36,6 +38,7 @@ export default function DiaglogComponentStore({
   const [singleFile, setSingleFile] = React.useState<any>()
   const [fileUpdate, setFileUpdate] = React.useState<any>()
   const [address, setAddress] = React.useState<any>()
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const { createStore, updateStore } = useStore()
   const { register, control, handleSubmit, setValue } = useForm()
@@ -57,9 +60,18 @@ export default function DiaglogComponentStore({
       setFileUpdate(store.image)
       setAddress(store.address)
     }
+    console.log(store)
   }, [store])
 
+  const setDefaultValue = () => {
+    setValue('title', '')
+    setValue('description', '')
+    setValue('image', undefined)
+    setFileUpdate(undefined)
+    setAddress(undefined)
+  }
   const handleSubmitForm = async (values: any) => {
+    setIsLoading(true)
     if (typeof address === 'string') {
       values.coordinates = store.coordinates.latitude + ',' + store.coordinates.longitude
       values.address = store.address
@@ -72,8 +84,13 @@ export default function DiaglogComponentStore({
         values._id = store._id
         await updateStore(values)
         setStore(undefined)
+        setIsLoading(false)
       } else {
+        values.coordinates =
+          values.coordinates.split(',')[0] + ',' + values.coordinates.split(',')[1]
         await createStore(values)
+        setIsLoading(false)
+        setDefaultValue()
       }
       setOpen(false)
     } catch (e) {
@@ -207,10 +224,16 @@ export default function DiaglogComponentStore({
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit" onClick={handleSubmit(handleSubmitForm)}>
+          {!isLoading ? <Button onClick={handleClose}>Cancel</Button> : null}
+          <LoadingButton
+            type="submit"
+            onClick={handleSubmit(handleSubmitForm)}
+            loading={isLoading}
+            loadingPosition="start"
+            startIcon={<SaveIcon />}
+          >
             {store ? 'Update' : 'Create'}
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     </div>

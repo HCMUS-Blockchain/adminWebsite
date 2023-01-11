@@ -84,6 +84,7 @@ function ProfileScreen() {
   const { data, getCounterpart, updateCounterpart } = useCounterPart()
 
   useEffect(() => {
+    console.log(data)
     if (data) {
       setValue('nameOfShop', data.data.result?.nameOfShop || '')
       setValue('imageCover', data.data.result?.image || '')

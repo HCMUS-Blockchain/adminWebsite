@@ -197,6 +197,9 @@ export function UploadImageComponent({ limit, multiple, name, ...rest }: IFileUp
               top: '50%',
               left: '0',
               transform: 'translateY(-50%)',
+              '&:hover': {
+                backgroundColor: '#FFFFFF',
+              },
             }}
           >
             <DeleteIcon />
@@ -249,6 +252,9 @@ export function UploadImageComponent({ limit, multiple, name, ...rest }: IFileUp
                     right: '1rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
+                    '&:hover': {
+                      backgroundColor: '#FFFFFF',
+                    },
                   }}
                 >
                   <DeleteIcon />

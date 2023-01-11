@@ -1,14 +1,24 @@
 import { statisticApi } from '@/api-client'
 import { DashboardComponent, DoughnutChart, VerticalBarChart } from '@/components/dashboard'
 import { MainLayout } from '@/components/layout'
-import { useCampaign } from '@/hooks'
+import { useAuth, useCampaign } from '@/hooks'
 import ArrowDownWardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
-import { Box, MenuItem, Paper, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import {
+  Box,
+  MenuItem,
+  Paper,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+  IconButton,
+} from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { useEffect, useState } from 'react'
 import { NextPageWithLayout } from '../models'
+import StarIcon from '@mui/icons-material/Star'
 
 const filter = [
   {
@@ -62,6 +72,7 @@ const Home: NextPageWithLayout = () => {
   const [discount, setDiscount] = useState([])
 
   const { data: campaignData } = useCampaign()
+  const { profile } = useAuth()
 
   const handleChange = async (e: any) => {
     const result = await statisticApi.getGeneralStatistic(e.target.value)
@@ -122,7 +133,7 @@ const Home: NextPageWithLayout = () => {
     }
     return (
       <Typography fontSize="small" color="rgb(128,128,128)">
-        Data is not found to compare
+        Data is equal on the last {option}
       </Typography>
     )
   }
@@ -158,15 +169,21 @@ const Home: NextPageWithLayout = () => {
   return (
     <Stack spacing={4}>
       <Typography component="h3" variant="h4">
-        Hello, Thanh Ngoc
+        Hello, {profile.data.fullName}
       </Typography>
       <Paper>
         <Box
           sx={{ display: 'flex', justifyContent: 'space-between', p: 2, alignContent: 'center' }}
         >
-          <Typography variant="h6" p={2}>
-            Statistic General
-          </Typography>
+          <Box sx={{ display: 'flex', alignContent: 'center', justifyContent: 'space-between' }}>
+            <IconButton disabled>
+              <StarIcon />
+            </IconButton>
+            <Typography variant="h6" alignSelf="center">
+              Statistic General
+            </Typography>
+          </Box>
+
           <TextField
             id="outlined-select-currency"
             select
@@ -253,9 +270,17 @@ const Home: NextPageWithLayout = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 4 }}>
           <Box>
             <Stack direction="row" justifyContent="space-between">
-              <Typography variant="h6" p={2}>
-                Game Statistic
-              </Typography>
+              <Box
+                sx={{ display: 'flex', alignContent: 'center', justifyContent: 'space-between' }}
+                alignSelf="center"
+              >
+                <IconButton disabled>
+                  <StarIcon />
+                </IconButton>
+                <Typography variant="h6" alignSelf="center">
+                  Game Statistic
+                </Typography>
+              </Box>
               <TextField
                 id="outlined-select-campaign"
                 select
@@ -276,9 +301,17 @@ const Home: NextPageWithLayout = () => {
           </Box>
           <Box>
             <Stack direction="row" justifyContent="space-between">
-              <Typography variant="h6" p={2}>
-                Voucher Discount Statistic
-              </Typography>
+              <Box
+                sx={{ display: 'flex', alignContent: 'center', justifyContent: 'space-between' }}
+                alignSelf="center"
+              >
+                <IconButton disabled>
+                  <StarIcon />
+                </IconButton>
+                <Typography variant="h6" alignSelf="center">
+                  Discount Voucher Statistic
+                </Typography>
+              </Box>
               <TextField
                 id="outlined-select-campaign"
                 select

@@ -8,6 +8,11 @@ export function useStore() {
 
   async function createStore(payload: any) {
     await storesApi.create(payload)
+    const temp = payload.coordinates.split(',')
+    payload.coordinates = {
+      latitude: temp[1],
+      longitude: temp[0],
+    }
     const x = {
       data: {
         stores: [...data.data.stores, payload],

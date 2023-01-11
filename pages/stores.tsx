@@ -11,7 +11,9 @@ function StoreScreen() {
   // const {data} = useStore()
   const [open, setOpen] = useState(false)
   const [store, setStore] = useState()
-  const [isUpdate, setIsUpdate] = useState(false)
+  const [info, setInfo] = useState<any>()
+  const [initialViewState, setInitialViewState] = useState<any>()
+
   const popUpDialog = () => {
     setOpen(true)
   }
@@ -28,8 +30,18 @@ function StoreScreen() {
       <Divider sx={{ mb: 4 }} />
       <DialogComponentStore open={open} setOpen={setOpen} store={store} setStore={setStore} />
       <Stack direction="row" spacing={2}>
-        <Map />
-        <ListComponent setStore={setStore} setOpen={setOpen} />
+        <Map
+          info={info}
+          setInfo={setInfo}
+          initialViewState={initialViewState}
+          setInitialViewState={setInitialViewState}
+        />
+        <ListComponent
+          setStore={setStore}
+          setOpen={setOpen}
+          setInfo={setInfo}
+          setInitialViewState={setInitialViewState}
+        />
       </Stack>
     </Box>
   )

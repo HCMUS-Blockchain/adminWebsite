@@ -143,7 +143,6 @@ export function HeaderComponent(props: Props) {
             }}
           >
             <Stack direction="row">
-              {/* <Image src={Logo} alt="logo" width={150} height={50} /> */}
               <Box sx={{ alignSelf: 'center', ml: 4 }}>
                 <Search>
                   <SearchIconWrapper>
@@ -163,12 +162,14 @@ export function HeaderComponent(props: Props) {
                 aria-controls={open ? 'account-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#FFFFFF',
+                  },
+                }}
               >
                 <Typography sx={{ mr: 2 }}>{profile.data.fullName}</Typography>
-                <Avatar
-                  src="https://images.pexels.com/photos/4016173/pexels-photo-4016173.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                  alt="avatar"
-                />
+                <Avatar src={profile.data.avatar} alt="avatar" />
               </IconButton>
 
               <Menu
@@ -207,7 +208,7 @@ export function HeaderComponent(props: Props) {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
                 <MenuItem onClick={handleProfile}>
-                  <Avatar /> My Profile
+                  <Avatar src={profile.data.avatar} /> My Profile
                 </MenuItem>
                 <Divider />
                 <MenuItem>

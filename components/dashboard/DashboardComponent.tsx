@@ -5,11 +5,14 @@ import { useCampaign } from '@/hooks'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, MenuItem, Paper, Stack, TextField, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton/IconButton'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import StarIcon from '@mui/icons-material/Star'
+
 import * as yup from 'yup'
 
 export interface DashboardComponentInterface {
@@ -95,9 +98,18 @@ export function DashboardComponent({ id }: DashboardComponentInterface) {
   return (
     <Paper>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2, alignContent: 'center' }}>
-        <Typography variant="h6" p={2}>
-          {id === 'Voucher' ? 'Voucher Statistic' : 'User Statistic'}
-        </Typography>
+        <Box
+          sx={{ display: 'flex', alignContent: 'center', justifyContent: 'space-between' }}
+          alignSelf="center"
+        >
+          <IconButton disabled>
+            <StarIcon />
+          </IconButton>
+          <Typography variant="h6" alignSelf="center">
+            {id === 'Voucher' ? 'Voucher Statistic' : 'User Statistic'}
+          </Typography>
+        </Box>
+
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Stack
             direction="row"

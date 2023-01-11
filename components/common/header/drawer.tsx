@@ -17,6 +17,8 @@ import {
   Link,
 } from '@mui/material'
 import Image from 'next/image'
+import { useAuth } from '@/hooks'
+import { useRouter } from 'next/router'
 // import Link from 'next/link'
 const drawerList = [
   {
@@ -59,17 +61,6 @@ export const drawer = (
               <ListItemText primary={item.title} />
             </ListItemButton>
           </Link>
-        </ListItem>
-      ))}
-    </List>
-    <Divider />
-    <List>
-      {['All mail', 'Trash', 'Spam'].map((text, index) => (
-        <ListItem key={text} disablePadding>
-          <ListItemButton>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItemButton>
         </ListItem>
       ))}
     </List>
